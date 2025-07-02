@@ -23,7 +23,7 @@
 - Backend: MySQL database.
 - Frontend: Java Swing GUI.
 - Database Connectivity: JDBC.
-- Tools: IntelliJ, MySQL Workbench.
+- Tools: Visual Studio Code, MySQL Workbench.
 
 ## Screenshots
 ![1](https://github.com/user-attachments/assets/de40715f-a4fd-4d8c-ae1c-28ba5715adfb)
