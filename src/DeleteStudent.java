@@ -8,10 +8,16 @@ public class DeleteStudent {
     public static void deleteStudent() {
         String studentFirstName = JOptionPane.showInputDialog("Enter student first name:");
         String studentLastName = JOptionPane.showInputDialog("Enter student last name:");
+        String studentIdStr = JOptionPane.showInputDialog("Enter student ID:");
+        int studentId = -1;
+        try {
+            studentId = Integer.parseInt(studentIdStr.trim());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Invalid ID. Please enter a valid number.");
+            return;
+        }
 
-
-        int studentId = getStudentId(studentFirstName, studentLastName);
-        if (studentId == -1) {
+        if (!verifyStudent(studentFirstName, studentLastName, studentId)) {
             JOptionPane.showMessageDialog(null, "Student not found. Please try again.");
             return;
         }
@@ -24,9 +30,11 @@ public class DeleteStudent {
 
         if (choice == JOptionPane.YES_OPTION) {
             try (Connection connection = MyJDBC.getConnection()) {
-                String deleteSql = "DELETE FROM students WHERE id = ?";
+                String deleteSql = "DELETE FROM students WHERE id = ? AND first_name = ? AND last_name = ?";
                 try (PreparedStatement preparedStatement = connection.prepareStatement(deleteSql)) {
                     preparedStatement.setInt(1, studentId);
+                    preparedStatement.setString(2, studentFirstName);
+                    preparedStatement.setString(3, studentLastName);
                     int rowsAffected = preparedStatement.executeUpdate();
 
                     if (rowsAffected > 0) {
@@ -44,22 +52,18 @@ public class DeleteStudent {
         }
     }
 
-    private static int getStudentId(String firstName, String lastName) {
-        String sql = "SELECT id FROM students WHERE first_name = ? AND last_name = ?";
+    private static boolean verifyStudent(String firstName, String lastName, int id) {
+        String sql = "SELECT id FROM students WHERE first_name = ? AND last_name = ? AND id = ?";
         try (Connection connection = MyJDBC.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, firstName);
             preparedStatement.setString(2, lastName);
+            preparedStatement.setInt(3, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                return resultSet.getInt("id");
-            } else {
-                return -1;
-            }
+            return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
-            return -1;
+            return false;
         }
     }
 } 

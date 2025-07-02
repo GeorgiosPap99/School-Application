@@ -11,17 +11,17 @@ public class Dashboard {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        Dimension middleButtonSize = new Dimension(200, 40);  // Width x Height
+        Dimension middleButtonSize = new Dimension(200, 40);  
 
         JButton addSubjectButton = createMiddleButton("Add Subject", middleButtonSize);
         JButton addStudentButton = createMiddleButton("Add Student", middleButtonSize);
         JButton addGradeButton = createMiddleButton("Add Grade", middleButtonSize);
         JButton deleteStudentButton = createMiddleButton("Delete Student", middleButtonSize);
 
-        addSubjectButton.addActionListener(e -> AddSubject.addNewSubject());
-        addStudentButton.addActionListener(e -> AddStudent.addNewStudent());
-        addGradeButton.addActionListener(e -> AddGrade.addNewGrade());
-        deleteStudentButton.addActionListener(e -> DeleteStudent.deleteStudent());
+        addSubjectButton.addActionListener(_ -> AddSubject.addNewSubject());
+        addStudentButton.addActionListener(_ -> AddStudent.addNewStudent());
+        addGradeButton.addActionListener(_ -> AddGrade.addNewGrade());
+        deleteStudentButton.addActionListener(_ -> DeleteStudent.deleteStudent());
 
         mainPanel.add(Box.createVerticalGlue());
         mainPanel.add(addSubjectButton);
@@ -40,8 +40,8 @@ public class Dashboard {
         bottomPanel.add(Box.createHorizontalStrut(10));
         bottomPanel.add(showAllStudentsButton);
 
-        searchStudentButton.addActionListener(e -> SearchStudent.searchStudent());
-        showAllStudentsButton.addActionListener(e -> AllStudents.showAllStudents());
+        searchStudentButton.addActionListener(_ -> SearchStudent.searchStudent());
+        showAllStudentsButton.addActionListener(_ -> AllStudents.showAllStudents());
 
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.add(bottomPanel, BorderLayout.SOUTH);

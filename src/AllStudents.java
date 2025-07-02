@@ -53,7 +53,7 @@ public class AllStudents {
         }
 
         JButton closeButton = new JButton("Close");
-        closeButton.addActionListener(e -> frame.dispose());
+        closeButton.addActionListener(_ -> frame.dispose());
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(scrollPane, BorderLayout.CENTER);

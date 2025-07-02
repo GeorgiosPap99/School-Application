@@ -48,21 +48,42 @@ public class AddStudent {
                 LocalDate birthDate = LocalDate.parse(birthDateStr);
                 java.sql.Date sqlBirthDate = java.sql.Date.valueOf(birthDate);
 
-                String sql = "INSERT INTO students (first_name, last_name, classroom_id, birth_date) VALUES (?, ?, ?, ?)";
+                String normalizedFirstName = firstName.toLowerCase().trim();
+                String normalizedLastName = lastName.toLowerCase().trim();
+
+                String checkSql = "SELECT COUNT(*) FROM students " + "WHERE LOWER(TRIM(first_name)) = ? AND LOWER(TRIM(last_name)) = ? AND birth_date = ?";
+                String insertSql = "INSERT INTO students (first_name, last_name, classroom_id, birth_date) VALUES (?, ?, ?, ?)";
+                
 
                 try (Connection connection = MyJDBC.getConnection();
-                     PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                     PreparedStatement checkStmt = connection.prepareStatement(checkSql)) {
 
-                    preparedStatement.setString(1, firstName);
-                    preparedStatement.setString(2, lastName);
-                    preparedStatement.setInt(3, classroomId);
-                    preparedStatement.setDate(4, sqlBirthDate);
+                    checkStmt.setString(1, normalizedFirstName);
+                    checkStmt.setString(2, normalizedLastName);
+                    checkStmt.setDate(3, sqlBirthDate);
+                    try (ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next()) {
+                        int count = rs.getInt(1);
+                        System.out.println("Duplicate check count: " + count);
+                        if (count > 0) {
+                            JOptionPane.showMessageDialog(null, "This student already exists!", "Error", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+                    }
+                }
+                    try (PreparedStatement insertStmt = connection.prepareStatement(insertSql)) {
+                        insertStmt.setString(1, firstName);
+                        insertStmt.setString(2, lastName);
+                        insertStmt.setInt(3, classroomId);
+                        insertStmt.setDate(4, sqlBirthDate);
 
-                    int rowsAffected = preparedStatement.executeUpdate();
+                        
+                    int rowsAffected = insertStmt.executeUpdate();
                     if (rowsAffected > 0) {
                         JOptionPane.showMessageDialog(null, "Student added successfully!");
                     } else {
                         JOptionPane.showMessageDialog(null, "Failed to add student.");
+                    }
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
